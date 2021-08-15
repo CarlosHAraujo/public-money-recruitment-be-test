@@ -184,12 +184,10 @@ namespace VacationRental.Api.Tests
                 Nights = 5,
                 Start = new DateTime(2021, 08, 15)
             };
-
-            ResourceIdViewModel postBookingResult1;
+                        
             using (var postBookingResponse1 = await _client.PostAsJsonAsync($"/api/v1/bookings", postBookingRequest1))
             {
                 Assert.True(postBookingResponse1.IsSuccessStatusCode);
-                postBookingResult1 = await postBookingResponse1.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
             var postBookingRequest2 = new BookingBindingModel
@@ -199,11 +197,9 @@ namespace VacationRental.Api.Tests
                 Start = new DateTime(2021, 08, 16)
             };
 
-            ResourceIdViewModel postBookingResult2;
             using (var postBookingResponse2 = await _client.PostAsJsonAsync($"/api/v1/bookings", postBookingRequest2))
             {
                 Assert.True(postBookingResponse2.IsSuccessStatusCode);
-                postBookingResult2 = await postBookingResponse2.Content.ReadAsAsync<ResourceIdViewModel>();
             }
         }
 

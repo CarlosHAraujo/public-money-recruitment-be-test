@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using VacationRental.Api.Models;
 using VacationRental.Core;
 
@@ -27,12 +28,12 @@ namespace VacationRental.Api.Features
         public class QueryHandler : RequestHandler<Query, CalendarViewModel>
         {
             private readonly IRentalRepository _rentals;
-            private readonly IBookingRepository _bookings;
+            private readonly IAvailabilityService _availabilityService;
 
-            public QueryHandler(IRentalRepository rentals, IBookingRepository bookings)
+            public QueryHandler(IRentalRepository rentals, IAvailabilityService availabilityService)
             {
                 _rentals = rentals;
-                _bookings = bookings;
+                _availabilityService = availabilityService;
             }
 
             protected override CalendarViewModel Handle(Query request)
@@ -45,48 +46,25 @@ namespace VacationRental.Api.Features
                 if (rental is null)
                     throw new ApplicationException("Rental not found");
 
+                var dates = _availabilityService.GetCalendarDates(rental, request.Start, request.Nights);
+
                 var result = new CalendarViewModel
                 {
                     RentalId = request.RentalId,
-                    Dates = new List<CalendarDateViewModel>()
-                };
-
-                List<Booking> bookings = _bookings.GetByRentalId(rental.Id);
-
-                for (var i = 0; i < request.Nights; i++)
-                {
-                    var date = new CalendarDateViewModel
+                    Dates = new List<CalendarDateViewModel>(dates.Select(calendarDay => new CalendarDateViewModel
                     {
-                        Date = request.Start.Date.AddDays(i),
-                        Bookings = new List<CalendarBookingViewModel>(),
-                        PreparationTimes = new List<CalendarPreparationTimeViewModel>()
-                    };
-
-                    foreach (var booking in bookings)
-                    {
-                        DateTime bookingEndDate = booking.Start.AddDays(booking.Nights);
-                        if (booking.Start <= date.Date)
+                        Date = calendarDay.Date,
+                        Bookings = new List<CalendarBookingViewModel>(calendarDay.Bookings.Select(booking => new CalendarBookingViewModel
                         {
-                            if (bookingEndDate > date.Date)
-                            {
-                                date.Bookings.Add(new CalendarBookingViewModel
-                                {
-                                    Id = booking.Id,
-                                    Unit = booking.Unit
-                                });
-                            }
-                            else if (bookingEndDate.AddDays(rental.PreparationTimeInDays) > date.Date)
-                            {
-                                date.PreparationTimes.Add(new CalendarPreparationTimeViewModel
-                                {
-                                    Unit = booking.Unit
-                                });
-                            }
-                        }
-                    }
-
-                    result.Dates.Add(date);
-                }
+                            Id = booking.Id,
+                            Unit = booking.Unit
+                        })),
+                        PreparationTimes = new List<CalendarPreparationTimeViewModel>(calendarDay.PreparationTimes.Select(preparation => new CalendarPreparationTimeViewModel
+                        {
+                            Unit = preparation.Unit
+                        }))
+                    }))
+                };
 
                 return result;
             }

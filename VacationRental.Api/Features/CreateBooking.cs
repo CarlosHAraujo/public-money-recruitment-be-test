@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using System;
-using System.Collections.Generic;
 using VacationRental.Api.Models;
 using VacationRental.Core;
 
@@ -47,9 +46,9 @@ namespace VacationRental.Api.Features
                 if (rental is null)
                     throw new ApplicationException("Rental not found");
 
-                List<Booking> bookings = _bookings.GetByRentalId(rental.Id);
-
-                int unitAvailable = _availabilityService.CheckAvailability(rental, request.Start, request.Nights, bookings);
+                rental.Bookings = _bookings.GetByRentalId(rental.Id);
+                
+                int unitAvailable = _availabilityService.CheckAvailability(rental, request.Start, request.Nights);
 
                 Booking booking = new Booking
                 {
