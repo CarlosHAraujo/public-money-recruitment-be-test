@@ -8,8 +8,15 @@ namespace VacationRental.Api.Features
     {
         public class Command : IRequest<ResourceIdViewModel>
         {
-            public int Units { get; internal set; }
-            public int PreparationTimeInDays { get; set; }
+            public Command(int units, int preparationTimeInDays)
+            {
+                Units = units;
+                PreparationTimeInDays = preparationTimeInDays;
+            }
+
+            public int Units { get; private set; }
+
+            public int PreparationTimeInDays { get; private set; }
         }
 
         public class CommandHandler : RequestHandler<Command, ResourceIdViewModel>

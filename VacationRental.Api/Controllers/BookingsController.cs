@@ -21,20 +21,13 @@ namespace VacationRental.Api.Controllers
         [Route("{bookingId:int}")]
         public Task<BookingViewModel> Get(int bookingId)
         {
-            return _mediator.Send(new GetBooking.Query { Id = bookingId });
+            return _mediator.Send(new GetBooking.Query(bookingId));
         }
 
         [HttpPost]
         public Task<ResourceIdViewModel> Post(BookingBindingModel model)
         {
-            CreateBooking.Command request = new CreateBooking.Command
-            {
-                RentalId = model.RentalId,
-                Nights = model.Nights,
-                Start = model.Start
-            };
-
-            return _mediator.Send(request);
+            return _mediator.Send(new CreateBooking.Command(model.RentalId, model.Nights, model.Start));
         }
     }
 }

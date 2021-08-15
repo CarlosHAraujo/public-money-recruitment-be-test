@@ -18,10 +18,9 @@ namespace VacationRental.Core
                 {
                     DateTime bookingEndDate = booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays);
                     DateTime requestEndDate = startDate.AddDays(nights + rental.PreparationTimeInDays);
-                    if (booking.RentalId == rental.Id
-                        && ((booking.Start <= startDate.Date && bookingEndDate > startDate.Date)
+                    if ((booking.Start <= startDate.Date && bookingEndDate > startDate.Date)
                         || (booking.Start < requestEndDate && bookingEndDate >= requestEndDate)
-                        || (booking.Start > startDate && bookingEndDate < requestEndDate)))
+                        || (booking.Start > startDate && bookingEndDate < requestEndDate))
                     {
                         count++;
                         occupiedUnits.Add(booking.Unit);

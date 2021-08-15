@@ -29,5 +29,10 @@ namespace VacationRental.Core
 
             return null;
         }
+
+        public void Update(Rental newRental)
+        {
+            _rentals[newRental.Id] = newRental;
+        }
     }
 }

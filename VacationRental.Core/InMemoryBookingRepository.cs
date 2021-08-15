@@ -21,11 +21,6 @@ namespace VacationRental.Core
             return booking.Id;
         }
 
-        public List<Booking> GetAll()
-        {
-            return _bookings.Values.ToList();
-        }
-
         public Booking Get(int id)
         {
             if (_bookings.ContainsKey(id))
@@ -34,6 +29,11 @@ namespace VacationRental.Core
             }
 
             return null;
+        }
+
+        public List<Booking> GetByRentalId(int rentalId)
+        {
+            return _bookings.Values.Where(x => x.RentalId == rentalId).ToList();
         }
     }
 }

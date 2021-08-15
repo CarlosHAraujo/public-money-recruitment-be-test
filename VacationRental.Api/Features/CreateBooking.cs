@@ -10,11 +10,18 @@ namespace VacationRental.Api.Features
     {
         public class Command : IRequest<ResourceIdViewModel>
         {
-            public int RentalId { get; set; }
+            public Command(int rentalId, int nights, DateTime start)
+            {
+                RentalId = rentalId;
+                Nights = nights;
+                Start = start;
+            }
 
-            public int Nights { get; set; }
+            public int RentalId { get; private set; }
+
+            public int Nights { get; private set; }
             
-            public DateTime Start { get; set; }
+            public DateTime Start { get; private set; }
         }
 
         public class CommandHandler : RequestHandler<Command, ResourceIdViewModel>
@@ -40,7 +47,7 @@ namespace VacationRental.Api.Features
                 if (rental is null)
                     throw new ApplicationException("Rental not found");
 
-                List<Booking> bookings = _bookings.GetAll();
+                List<Booking> bookings = _bookings.GetByRentalId(rental.Id);
 
                 int unitAvailable = _availabilityService.CheckAvailability(rental, request.Start, request.Nights, bookings);
 

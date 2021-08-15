@@ -4,7 +4,7 @@ namespace VacationRental.Core
 {
     public interface IBookingRepository
     {
-        List<Booking> GetAll();
+        List<Booking> GetByRentalId(int rentalId);
         Booking Get(int id);
         int Create(Booking booking);
     }

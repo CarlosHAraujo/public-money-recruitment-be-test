@@ -21,14 +21,7 @@ namespace VacationRental.Api.Controllers
         [HttpGet]
         public Task<CalendarViewModel> Get(int rentalId, DateTime start, int nights)
         {
-            GetCalendar.Query request = new GetCalendar.Query
-            {
-                RentalId = rentalId,
-                Start = start,
-                Nights = nights
-            };
-
-            return _mediator.Send(request);
+            return _mediator.Send(new GetCalendar.Query(rentalId, start, nights));
         }
     }
 }

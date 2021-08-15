@@ -4,5 +4,6 @@
     {
         Rental Get(int id);
         int Create(Rental rental);
+        void Update(Rental newRental);
     }
 }

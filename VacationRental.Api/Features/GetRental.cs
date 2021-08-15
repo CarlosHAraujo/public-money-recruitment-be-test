@@ -9,7 +9,12 @@ namespace VacationRental.Api.Features
     {
         public class Query : IRequest<RentalViewModel>
         {
-            public int Id { get; set; }
+            public Query(int id)
+            {
+                Id = id;
+            }
+
+            public int Id { get; private set; }
         }
 
         public class QueryHandler : RequestHandler<Query, RentalViewModel>

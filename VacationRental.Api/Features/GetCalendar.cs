@@ -10,9 +10,18 @@ namespace VacationRental.Api.Features
     {
         public class Query : IRequest<CalendarViewModel>
         {
-            public int Nights { get; set; }
-            public DateTime Start { get; set; }
-            public int RentalId { get; set; }
+            public Query(int rentalId, DateTime start, int nights)
+            {
+                RentalId = rentalId;
+                Start = start;
+                Nights = nights;
+            }
+
+            public int Nights { get; private set; }
+
+            public DateTime Start { get; private set; }
+
+            public int RentalId { get; private set; }
         }
 
         public class QueryHandler : RequestHandler<Query, CalendarViewModel>
@@ -42,7 +51,7 @@ namespace VacationRental.Api.Features
                     Dates = new List<CalendarDateViewModel>()
                 };
 
-                List<Booking> bookings = _bookings.GetAll();
+                List<Booking> bookings = _bookings.GetByRentalId(rental.Id);
 
                 for (var i = 0; i < request.Nights; i++)
                 {
@@ -56,8 +65,7 @@ namespace VacationRental.Api.Features
                     foreach (var booking in bookings)
                     {
                         DateTime bookingEndDate = booking.Start.AddDays(booking.Nights);
-                        if (booking.RentalId == request.RentalId
-                            && booking.Start <= date.Date)
+                        if (booking.Start <= date.Date)
                         {
                             if (bookingEndDate > date.Date)
                             {
